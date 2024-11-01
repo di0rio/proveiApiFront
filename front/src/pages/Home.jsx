@@ -50,7 +50,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white mt-3">
       <section className="relative h-96 bg-amber-50 flex items-center justify-center mb-12">
         <div className="text-center p-8">
           <h1 className="text-4xl font-bold text-amber-800 mb-4">
@@ -63,7 +63,7 @@ const Home = () => {
       </section>
 
       <section className="container mx-auto px-4 mb-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-9">
           {features.map((feature, index) => (
             <div
               key={index}
@@ -79,7 +79,7 @@ const Home = () => {
 
       <section className="bg-amber-50 py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
+          <h2 className="text-3xl font-bold text-center mb-12 mt-7">
             Nossos Produtos Mais Amados
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -109,9 +109,6 @@ const Home = () => {
           <p className="mb-8 text-amber-100">
             Aceitamos encomendas para festas e eventos especiais
           </p>
-          <button className="bg-white text-amber-800 px-8 py-3 rounded-full hover:bg-amber-100 transition-colors">
-            Entre em Contato
-          </button>
         </div>
       </section>
     </div>
