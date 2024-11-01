@@ -175,11 +175,11 @@ const Produtos = () => {
             required
           />
         </div>
-        <div className="mb-3">
+        {/* <div className="mb-3">
           <label htmlFor="fornecedorId" className="form-label">
             Fornecedor:
-          </label>
-          <select
+          </label> */}
+          {/* <select
             name="fornecedorId"
             className="form-select"
             value={formData.fornecedorId || ""}
@@ -192,8 +192,8 @@ const Produtos = () => {
                 {fornecedor.nome}
               </option>
             ))}
-          </select>
-        </div>
+          </select> */}
+        {/* </div> */}
       </div>
       <div className="modal-footer">
         <button
@@ -230,7 +230,6 @@ const Produtos = () => {
         </button>
       </div>
 
-      {/* Tabela de Produtos */}
       <div className="table-responsive">
         <table className="table table-striped table-hover">
           <thead className="table-dark">
@@ -239,22 +238,22 @@ const Produtos = () => {
               <th>Descrição</th>
               <th>Preço</th>
               <th>Quantidade</th>
-              <th>Fornecedor</th>
+              {/* <th>Fornecedor</th> */}
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {produtos.map((produto) => {
-              const fornecedor = fornecedores.find(
-                (f) => f.id === produto.fornecedorId
-              );
+              // const fornecedor = fornecedores.find(
+              //   (f) => f.id === produto.fornecedorId
+              // );
               return (
                 <tr key={produto.id}>
                   <td>{produto.nome}</td>
                   <td>{produto.descricao}</td>
                   <td>{produto.preco}</td>
                   <td>{produto.quantidadeEmEstoque}</td>
-                  <td>{fornecedor ? fornecedor.nome : produto.fornecedorId}</td>
+                  {/* <td>{fornecedor ? fornecedor.nome : produto.fornecedorId}</td> */}
                   <td>
                     <button
                       className="btn btn-sm btn-primary me-2"
@@ -296,7 +295,6 @@ const Produtos = () => {
         </div>
       </div>
 
-      {/* Modal de Edição */}
       <div
         className={`modal ${showEditModal ? "d-block" : ""}`}
         tabIndex="-1"
@@ -314,7 +312,6 @@ const Produtos = () => {
         </div>
       </div>
 
-      {/* Modal de Confirmação de Exclusão */}
       <div
         className={`modal ${showDeleteModal ? "d-block" : ""}`}
         tabIndex="-1"
