@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ApiPadaria.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreatee : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -45,11 +45,31 @@ namespace ApiPadaria.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Venda",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DataEmissao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ValorTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ClienteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Venda", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Venda_Cliente_ClienteId",
+                        column: x => x.ClienteId,
+                        principalTable: "Cliente",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Produto",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Preco = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     QuantidadeEmEstoque = table.Column<int>(type: "int", nullable: false),
@@ -67,40 +87,12 @@ namespace ApiPadaria.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Venda",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DataEmissao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ValorTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ClienteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProdutoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Venda", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Venda_Cliente_ClienteId",
-                        column: x => x.ClienteId,
-                        principalTable: "Cliente",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Venda_Produto_ProdutoId",
-                        column: x => x.ProdutoId,
-                        principalTable: "Produto",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "VendaProduto",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantidade = table.Column<int>(type: "int", nullable: false),
                     VendaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    VendaProdutoId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ProdutoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -113,10 +105,11 @@ namespace ApiPadaria.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_VendaProduto_Venda_VendaProdutoId",
-                        column: x => x.VendaProdutoId,
+                        name: "FK_VendaProduto_Venda_VendaId",
+                        column: x => x.VendaId,
                         principalTable: "Venda",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -130,19 +123,14 @@ namespace ApiPadaria.Migrations
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Venda_ProdutoId",
-                table: "Venda",
-                column: "ProdutoId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_VendaProduto_ProdutoId",
                 table: "VendaProduto",
                 column: "ProdutoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VendaProduto_VendaProdutoId",
+                name: "IX_VendaProduto_VendaId",
                 table: "VendaProduto",
-                column: "VendaProdutoId");
+                column: "VendaId");
         }
 
         /// <inheritdoc />
@@ -152,16 +140,16 @@ namespace ApiPadaria.Migrations
                 name: "VendaProduto");
 
             migrationBuilder.DropTable(
-                name: "Venda");
-
-            migrationBuilder.DropTable(
-                name: "Cliente");
-
-            migrationBuilder.DropTable(
                 name: "Produto");
 
             migrationBuilder.DropTable(
+                name: "Venda");
+
+            migrationBuilder.DropTable(
                 name: "Fornecedor");
+
+            migrationBuilder.DropTable(
+                name: "Cliente");
         }
     }
 }

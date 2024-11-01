@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiPadaria.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241101144822_InitialCreatee")]
-    partial class InitialCreatee
+    [Migration("20241101182830_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,7 +105,8 @@ namespace ApiPadaria.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Preco")
                         .HasColumnType("decimal(18,2)");
@@ -132,17 +133,12 @@ namespace ApiPadaria.Migrations
                     b.Property<DateTime>("DataEmissao")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProdutoId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("ValorTotal")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
-
-                    b.HasIndex("ProdutoId");
 
                     b.ToTable("Venda");
                 });
@@ -162,14 +158,11 @@ namespace ApiPadaria.Migrations
                     b.Property<Guid>("VendaId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("VendaProdutoId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProdutoId");
 
-                    b.HasIndex("VendaProdutoId");
+                    b.HasIndex("VendaId");
 
                     b.ToTable("VendaProduto");
                 });
@@ -193,15 +186,7 @@ namespace ApiPadaria.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("proveiMvc.Models.Produto", "Produto")
-                        .WithMany()
-                        .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Cliente");
-
-                    b.Navigation("Produto");
                 });
 
             modelBuilder.Entity("proveiMvc.Models.VendaProduto", b =>
@@ -214,7 +199,9 @@ namespace ApiPadaria.Migrations
 
                     b.HasOne("proveiMvc.Models.Venda", "Venda")
                         .WithMany("Produtos")
-                        .HasForeignKey("VendaProdutoId");
+                        .HasForeignKey("VendaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Produto");
 

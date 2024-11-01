@@ -3,103 +3,101 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import api from "../services/api";
 import { Trash2, Edit, Plus } from "lucide-react";
 
-const Clientes = () => {
-  const [clientes, setClientes] = useState([]);
+const Produtos = () => {
+  const [produtos, setProdutos] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedCliente, setSelectedCliente] = useState(null);
+  const [selectedProduto, setSelectedProduto] = useState(null);
 
   const [formData, setFormData] = useState({
     nome: "",
-    cpF_CNPJ: "",
-    endereco: "",
-    telefone: "",
-    email: "",
-    statusAtivo: true,
+    descricao: "",
+    preco: 0,
+    quantidadeEmEstoque: 0,
+    fornecedorId: "",
   });
 
-  const fetchClientes = async () => {
+  const fetchProdutos = async () => {
     try {
-      const response = await api.get("/Clientes");
-      setClientes(response.data);
+      const response = await api.get("/Produtos");
+      setProdutos(response.data);
     } catch (error) {
-      console.error("Erro ao carregar clientes:", error);
-      alert("Erro ao carregar clientes");
+      console.error("Erro ao carregar produtos:", error);
+      alert("Erro ao carregar produtos");
     }
   };
 
   useEffect(() => {
-    fetchClientes();
+    fetchProdutos();
   }, []);
 
   const handleOnChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/Clientes", formData);
+      await api.post("/Produtos", formData);
       setShowCreateModal(false);
       resetForm();
-      fetchClientes();
-      alert("Cliente criado com sucesso!");
+      fetchProdutos();
+      alert("Produto criado com sucesso!");
     } catch (error) {
-      console.error("Erro ao criar cliente:", error);
-      alert("Erro ao criar cliente");
+      console.error("Erro ao criar produto:", error);
+      alert("Erro ao criar produto");
     }
   };
 
   const handleEdit = async (e) => {
     e.preventDefault();
     try {
-      await api.put(`/Clientes/${selectedCliente.id}`, formData);
+      await api.put(`/Produtos/${selectedProduto.id}`, formData);
       setShowEditModal(false);
       resetForm();
-      fetchClientes();
-      alert("Cliente atualizado com sucesso!");
+      fetchProdutos();
+      alert("Produto atualizado com sucesso!");
     } catch (error) {
-      console.error("Erro ao atualizar cliente:", error);
-      alert("Erro ao atualizar cliente");
+      console.error("Erro ao atualizar produto:", error);
+      alert("Erro ao atualizar produto");
     }
   };
 
   const handleDelete = async () => {
     try {
-      await api.delete(`/Clientes/${selectedCliente.id}`);
+      await api.delete(`/Produtos/${selectedProduto.id}`);
       setShowDeleteModal(false);
-      setSelectedCliente(null);
-      fetchClientes();
-      alert("Cliente deletado com sucesso!");
+      setSelectedProduto(null);
+      fetchProdutos();
+      alert("Produto deletado com sucesso!");
     } catch (error) {
-      console.error("Erro ao deletar cliente:", error);
-      alert("Erro ao deletar cliente");
+      console.error("Erro ao deletar produto:", error);
+      alert("Erro ao deletar produto");
     }
   };
 
   const resetForm = () => {
     setFormData({
       nome: "",
-      cpF_CNPJ: "",
-      endereco: "",
-      telefone: "",
-      email: "",
-      statusAtivo: true,
+      descricao: "",
+      preco: 0,
+      quantidadeEmEstoque: 0,
+      fornecedorId: "",
     });
   };
 
-  const openEditModal = (cliente) => {
-    setSelectedCliente(cliente);
-    setFormData({ ...cliente });
+  const openEditModal = (produto) => {
+    setSelectedProduto(produto);
+    setFormData({ ...produto });
     setShowEditModal(true);
   };
 
-  const ClienteForm = ({ onSubmit, title, submitText }) => (
+  const ProdutoForm = ({ onSubmit, title, submitText }) => (
     <form onSubmit={onSubmit} className="needs-validation">
       <div className="modal-header">
         <h5 className="modal-title">{title}</h5>
@@ -114,90 +112,69 @@ const Clientes = () => {
         ></button>
       </div>
       <div className="modal-body">
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label htmlFor="nome" className="form-label">
-              Nome:
-            </label>
-            <input
-              name="nome"
-              type="text"
-              className="form-control"
-              value={formData.nome || ""}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
-          <div className="col-md-6 mb-3">
-            <label htmlFor="cpF_CNPJ" className="form-label">
-              CPF/CNPJ:
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="cpF_CNPJ"
-              value={formData.cpF_CNPJ || ""}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
-        </div>
-
         <div className="mb-3">
-          <label htmlFor="endereco" className="form-label">
-            Endereço:
+          <label htmlFor="nome" className="form-label">
+            Nome:
           </label>
           <input
+            name="nome"
             type="text"
             className="form-control"
-            name="endereco"
-            value={formData.endereco || ""}
+            value={formData.nome || ""}
             onChange={handleOnChange}
             required
           />
         </div>
-
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label htmlFor="email" className="form-label">
-              Email:
-            </label>
-            <input
-              type="email"
-              className="form-control"
-              name="email"
-              value={formData.email || ""}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
-          <div className="col-md-6 mb-3">
-            <label htmlFor="telefone" className="form-label">
-              Telefone:
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="telefone"
-              value={formData.telefone || ""}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
-        </div>
-
         <div className="mb-3">
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              name="statusAtivo"
-              checked={formData.statusAtivo}
-              onChange={handleOnChange}
-              disabled
-            />
-            <label className="form-check-label">Cliente Ativo</label>
-          </div>
+          <label htmlFor="descricao" className="form-label">
+            Descrição:
+          </label>
+          <textarea
+            name="descricao"
+            className="form-control"
+            value={formData.descricao || ""}
+            onChange={handleOnChange}
+            required
+          ></textarea>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="preco" className="form-label">
+            Preço:
+          </label>
+          <input
+            name="preco"
+            type="number"
+            className="form-control"
+            value={formData.preco || ""}
+            onChange={handleOnChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="quantidadeEmEstoque" className="form-label">
+            Quantidade em Estoque:
+          </label>
+          <input
+            name="quantidadeEmEstoque"
+            type="number"
+            className="form-control"
+            value={formData.quantidadeEmEstoque || ""}
+            onChange={handleOnChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="fornecedorId" className="form-label">
+            Fornecedor ID:
+          </label>
+          <input
+            name="fornecedorId"
+            type="text"
+            className="form-control"
+            value={formData.fornecedorId || ""}
+            onChange={handleOnChange}
+            required
+          />
         </div>
       </div>
       <div className="modal-footer">
@@ -222,7 +199,7 @@ const Clientes = () => {
   return (
     <div className="container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Clientes</h1>
+        <h1>Produtos</h1>
         <button
           className="btn btn-primary"
           onClick={() => {
@@ -231,52 +208,42 @@ const Clientes = () => {
           }}
         >
           <Plus size={20} className="me-2" />
-          Novo Cliente
+          Novo Produto
         </button>
       </div>
 
-      {/* Tabela de Clientes */}
+      {/* Tabela de Produtos */}
       <div className="table-responsive">
         <table className="table table-striped table-hover">
           <thead className="table-dark">
             <tr>
               <th>Nome</th>
-              <th>CPF/CNPJ</th>
-              <th>Endereço</th>
-              <th>Email</th>
-              <th>Telefone</th>
-              <th>Status</th>
+              <th>Descrição</th>
+              <th>Preço</th>
+              <th>Quantidade</th>
+              <th>Fornecedor ID</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            {clientes.map((cliente) => (
-              <tr key={cliente.id}>
-                <td>{cliente.nome}</td>
-                <td>{cliente.cpF_CNPJ}</td>
-                <td>{cliente.endereco}</td>
-                <td>{cliente.email}</td>
-                <td>{cliente.telefone}</td>
-                <td>
-                  <span
-                    className={`badge ${
-                      cliente.statusAtivo ? "bg-success" : "bg-danger"
-                    }`}
-                  >
-                    {cliente.statusAtivo ? "Ativo" : "Inativo"}
-                  </span>
-                </td>
+            {produtos.map((produto) => (
+              <tr key={produto.id}>
+                <td>{produto.nome}</td>
+                <td>{produto.descricao}</td>
+                <td>{produto.preco}</td>
+                <td>{produto.quantidadeEmEstoque}</td>
+                <td>{produto.fornecedorId}</td>
                 <td>
                   <button
                     className="btn btn-sm btn-primary me-2"
-                    onClick={() => openEditModal(cliente)}
+                    onClick={() => openEditModal(produto)}
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     className="btn btn-sm btn-danger"
                     onClick={() => {
-                      setSelectedCliente(cliente);
+                      setSelectedProduto(produto);
                       setShowDeleteModal(true);
                     }}
                   >
@@ -298,9 +265,9 @@ const Clientes = () => {
       >
         <div className="modal-dialog" role="document">
           <div className="modal-content">
-            <ClienteForm
+            <ProdutoForm
               onSubmit={handleCreate}
-              title="Novo Cliente"
+              title="Novo Produto"
               submitText="Criar"
             />
           </div>
@@ -316,9 +283,9 @@ const Clientes = () => {
       >
         <div className="modal-dialog" role="document">
           <div className="modal-content">
-            <ClienteForm
+            <ProdutoForm
               onSubmit={handleEdit}
-              title="Editar Cliente"
+              title="Editar Produto"
               submitText="Salvar"
             />
           </div>
@@ -345,7 +312,7 @@ const Clientes = () => {
             <div className="modal-body">
               <p>
                 Tem certeza que deseja excluir o cliente{" "}
-                <strong>{selectedCliente?.nome}</strong>?
+                <strong>{selectedProduto?.nome}</strong>?
               </p>
             </div>
             <div className="modal-footer">
@@ -371,4 +338,4 @@ const Clientes = () => {
   );
 };
 
-export default Clientes;
+export default Produtos;

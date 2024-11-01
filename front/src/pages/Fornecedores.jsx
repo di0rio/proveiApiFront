@@ -3,103 +3,101 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import api from "../services/api";
 import { Trash2, Edit, Plus } from "lucide-react";
 
-const Clientes = () => {
-  const [clientes, setClientes] = useState([]);
+const Fornecedores = () => {
+  const [fornecedores, setFornecedores] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedCliente, setSelectedCliente] = useState(null);
+  const [selectedFornecedor, setSelectedFornecedor] = useState(null);
 
   const [formData, setFormData] = useState({
-    nome: "",
-    cpF_CNPJ: "",
+    nomeEmpresa: "",
+    cnpj: "",
     endereco: "",
     telefone: "",
     email: "",
-    statusAtivo: true,
   });
 
-  const fetchClientes = async () => {
+  const fetchFornecedores = async () => {
     try {
-      const response = await api.get("/Clientes");
-      setClientes(response.data);
+      const response = await api.get("/Fornecedores");
+      setFornecedores(response.data);
     } catch (error) {
-      console.error("Erro ao carregar clientes:", error);
-      alert("Erro ao carregar clientes");
+      console.error("Erro ao carregar fornecedores:", error);
+      alert("Erro ao carregar fornecedores");
     }
   };
 
   useEffect(() => {
-    fetchClientes();
+    fetchFornecedores();
   }, []);
 
   const handleOnChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/Clientes", formData);
+      await api.post("/Fornecedores", formData);
       setShowCreateModal(false);
       resetForm();
-      fetchClientes();
-      alert("Cliente criado com sucesso!");
+      fetchFornecedores();
+      alert("Fornecedor criado com sucesso!");
     } catch (error) {
-      console.error("Erro ao criar cliente:", error);
-      alert("Erro ao criar cliente");
+      console.error("Erro ao criar fornecedor:", error);
+      alert("Erro ao criar fornecedor");
     }
   };
 
   const handleEdit = async (e) => {
     e.preventDefault();
     try {
-      await api.put(`/Clientes/${selectedCliente.id}`, formData);
+      await api.put(`/Fornecedores/${selectedFornecedor.id}`, formData);
       setShowEditModal(false);
       resetForm();
-      fetchClientes();
-      alert("Cliente atualizado com sucesso!");
+      fetchFornecedores();
+      alert("Fornecedor atualizado com sucesso!");
     } catch (error) {
-      console.error("Erro ao atualizar cliente:", error);
-      alert("Erro ao atualizar cliente");
+      console.error("Erro ao atualizar fornecedor:", error);
+      alert("Erro ao atualizar fornecedor");
     }
   };
 
   const handleDelete = async () => {
     try {
-      await api.delete(`/Clientes/${selectedCliente.id}`);
+      await api.delete(`/Fornecedores/${selectedFornecedor.id}`);
       setShowDeleteModal(false);
-      setSelectedCliente(null);
-      fetchClientes();
-      alert("Cliente deletado com sucesso!");
+      setSelectedFornecedor(null);
+      fetchFornecedores();
+      alert("Fornecedor deletado com sucesso!");
     } catch (error) {
-      console.error("Erro ao deletar cliente:", error);
-      alert("Erro ao deletar cliente");
+      console.error("Erro ao deletar fornecedor:", error);
+      alert("Erro ao deletar fornecedor");
     }
   };
 
   const resetForm = () => {
     setFormData({
-      nome: "",
-      cpF_CNPJ: "",
-      endereco: "",
-      telefone: "",
-      email: "",
-      statusAtivo: true,
+        nomeEmpresa: "",
+        cnpj: "",
+        endereco: "",
+        telefone: "",
+        email: ""
     });
   };
 
-  const openEditModal = (cliente) => {
-    setSelectedCliente(cliente);
-    setFormData({ ...cliente });
+  const openEditModal = (fornecedor) => {
+    setSelectedFornecedor(fornecedor);
+    setFormData({ ...fornecedor });
     setShowEditModal(true);
   };
 
-  const ClienteForm = ({ onSubmit, title, submitText }) => (
+  const FornecedorForm = ({ onSubmit, title, submitText }) => (
     <form onSubmit={onSubmit} className="needs-validation">
       <div className="modal-header">
         <h5 className="modal-title">{title}</h5>
@@ -114,35 +112,32 @@ const Clientes = () => {
         ></button>
       </div>
       <div className="modal-body">
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label htmlFor="nome" className="form-label">
-              Nome:
-            </label>
-            <input
-              name="nome"
-              type="text"
-              className="form-control"
-              value={formData.nome || ""}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
-          <div className="col-md-6 mb-3">
-            <label htmlFor="cpF_CNPJ" className="form-label">
-              CPF/CNPJ:
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="cpF_CNPJ"
-              value={formData.cpF_CNPJ || ""}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
+        <div className="mb-3">
+          <label htmlFor="nomeEmpresa" className="form-label">
+            Nome da Empresa:
+          </label>
+          <input
+            name="nomeEmpresa"
+            type="text"
+            className="form-control"
+            value={formData.nomeEmpresa || ""}
+            onChange={handleOnChange}
+            required
+          />
         </div>
-
+        <div className="mb-3">
+          <label htmlFor="cnpj" className="form-label">
+            CNPJ:
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            name="cnpj"
+            value={formData.cnpj || ""}
+            onChange={handleOnChange}
+            required
+          />
+        </div>
         <div className="mb-3">
           <label htmlFor="endereco" className="form-label">
             Endereço:
@@ -156,48 +151,31 @@ const Clientes = () => {
             required
           />
         </div>
-
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label htmlFor="email" className="form-label">
-              Email:
-            </label>
-            <input
-              type="email"
-              className="form-control"
-              name="email"
-              value={formData.email || ""}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
-          <div className="col-md-6 mb-3">
-            <label htmlFor="telefone" className="form-label">
-              Telefone:
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="telefone"
-              value={formData.telefone || ""}
-              onChange={handleOnChange}
-              required
-            />
-          </div>
-        </div>
-
         <div className="mb-3">
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              name="statusAtivo"
-              checked={formData.statusAtivo}
-              onChange={handleOnChange}
-              disabled
-            />
-            <label className="form-check-label">Cliente Ativo</label>
-          </div>
+          <label htmlFor="telefone" className="form-label">
+            Telefone:
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            name="telefone"
+            value={formData.telefone || ""}
+            onChange={handleOnChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">
+            Email:
+          </label>
+          <input
+            type="email"
+            className="form-control"
+            name="email"
+            value={formData.email || ""}
+            onChange={handleOnChange}
+            required
+          />
         </div>
       </div>
       <div className="modal-footer">
@@ -218,11 +196,10 @@ const Clientes = () => {
       </div>
     </form>
   );
-
   return (
     <div className="container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Clientes</h1>
+        <h1>Fornecedores</h1>
         <button
           className="btn btn-primary"
           onClick={() => {
@@ -231,52 +208,41 @@ const Clientes = () => {
           }}
         >
           <Plus size={20} className="me-2" />
-          Novo Cliente
+          Novo Fornecedor
         </button>
       </div>
 
-      {/* Tabela de Clientes */}
       <div className="table-responsive">
         <table className="table table-striped table-hover">
           <thead className="table-dark">
             <tr>
-              <th>Nome</th>
-              <th>CPF/CNPJ</th>
+              <th>Nome da Empresa</th>
+              <th>CNPJ</th>
               <th>Endereço</th>
-              <th>Email</th>
               <th>Telefone</th>
-              <th>Status</th>
+              <th>Email</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            {clientes.map((cliente) => (
-              <tr key={cliente.id}>
-                <td>{cliente.nome}</td>
-                <td>{cliente.cpF_CNPJ}</td>
-                <td>{cliente.endereco}</td>
-                <td>{cliente.email}</td>
-                <td>{cliente.telefone}</td>
-                <td>
-                  <span
-                    className={`badge ${
-                      cliente.statusAtivo ? "bg-success" : "bg-danger"
-                    }`}
-                  >
-                    {cliente.statusAtivo ? "Ativo" : "Inativo"}
-                  </span>
-                </td>
+            {fornecedores.map((fornecedor) => (
+              <tr key={fornecedor.id}>
+                <td>{fornecedor.nomeEmpresa}</td>
+                <td>{fornecedor.cnpj}</td>
+                <td>{fornecedor.endereco}</td>
+                <td>{fornecedor.telefone}</td>
+                <td>{fornecedor.email}</td>
                 <td>
                   <button
                     className="btn btn-sm btn-primary me-2"
-                    onClick={() => openEditModal(cliente)}
+                    onClick={() => openEditModal(fornecedor)}
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     className="btn btn-sm btn-danger"
                     onClick={() => {
-                      setSelectedCliente(cliente);
+                      setSelectedFornecedor(fornecedor);
                       setShowDeleteModal(true);
                     }}
                   >
@@ -289,7 +255,6 @@ const Clientes = () => {
         </table>
       </div>
 
-      {/* Modal de Criação */}
       <div
         className={`modal ${showCreateModal ? "d-block" : ""}`}
         tabIndex="-1"
@@ -298,16 +263,15 @@ const Clientes = () => {
       >
         <div className="modal-dialog" role="document">
           <div className="modal-content">
-            <ClienteForm
+            <FornecedorForm
               onSubmit={handleCreate}
-              title="Novo Cliente"
+              title="Novo Fornecedor"
               submitText="Criar"
             />
           </div>
         </div>
       </div>
 
-      {/* Modal de Edição */}
       <div
         className={`modal ${showEditModal ? "d-block" : ""}`}
         tabIndex="-1"
@@ -316,16 +280,15 @@ const Clientes = () => {
       >
         <div className="modal-dialog" role="document">
           <div className="modal-content">
-            <ClienteForm
+            <FornecedorForm
               onSubmit={handleEdit}
-              title="Editar Cliente"
+              title="Editar Fornecedor"
               submitText="Salvar"
             />
           </div>
         </div>
       </div>
 
-      {/* Modal de Confirmação de Exclusão */}
       <div
         className={`modal ${showDeleteModal ? "d-block" : ""}`}
         tabIndex="-1"
@@ -345,7 +308,7 @@ const Clientes = () => {
             <div className="modal-body">
               <p>
                 Tem certeza que deseja excluir o cliente{" "}
-                <strong>{selectedCliente?.nome}</strong>?
+                <strong>{selectedFornecedor?.nomeEmpresa}</strong>?
               </p>
             </div>
             <div className="modal-footer">
@@ -371,4 +334,4 @@ const Clientes = () => {
   );
 };
 
-export default Clientes;
+export default Fornecedores;
