@@ -5,6 +5,7 @@ import { Trash2, Edit, Plus } from "lucide-react";
 
 const Produtos = () => {
   const [produtos, setProdutos] = useState([]);
+  const [fornecedores, setFornecedores] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -18,6 +19,16 @@ const Produtos = () => {
     fornecedorId: "",
   });
 
+  const fetchFornecedores = async () => {
+    try {
+      const response = await api.get("/Fornecedores");
+      setFornecedores(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar fornecedores:", error);
+      alert("Erro ao carregar fornecedores");
+    }
+  };
+
   const fetchProdutos = async () => {
     try {
       const response = await api.get("/Produtos");
@@ -30,13 +41,14 @@ const Produtos = () => {
 
   useEffect(() => {
     fetchProdutos();
+    fetchFornecedores();
   }, []);
 
   const handleOnChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: type === "number" ? Number(value) : value,
     }));
   };
 
@@ -165,16 +177,22 @@ const Produtos = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="fornecedorId" className="form-label">
-            Fornecedor ID:
+            Fornecedor:
           </label>
-          <input
+          <select
             name="fornecedorId"
-            type="text"
-            className="form-control"
+            className="form-select"
             value={formData.fornecedorId || ""}
             onChange={handleOnChange}
             required
-          />
+          >
+            <option value="">Selecione um fornecedor</option>
+            {fornecedores.map((fornecedor) => (
+              <option key={fornecedor.id} value={fornecedor.id}>
+                {fornecedor.nome}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="modal-footer">
@@ -221,42 +239,46 @@ const Produtos = () => {
               <th>Descrição</th>
               <th>Preço</th>
               <th>Quantidade</th>
-              <th>Fornecedor ID</th>
+              <th>Fornecedor</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            {produtos.map((produto) => (
-              <tr key={produto.id}>
-                <td>{produto.nome}</td>
-                <td>{produto.descricao}</td>
-                <td>{produto.preco}</td>
-                <td>{produto.quantidadeEmEstoque}</td>
-                <td>{produto.fornecedorId}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-primary me-2"
-                    onClick={() => openEditModal(produto)}
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => {
-                      setSelectedProduto(produto);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {produtos.map((produto) => {
+              const fornecedor = fornecedores.find(
+                (f) => f.id === produto.fornecedorId
+              );
+              return (
+                <tr key={produto.id}>
+                  <td>{produto.nome}</td>
+                  <td>{produto.descricao}</td>
+                  <td>{produto.preco}</td>
+                  <td>{produto.quantidadeEmEstoque}</td>
+                  <td>{fornecedor ? fornecedor.nome : produto.fornecedorId}</td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-primary me-2"
+                      onClick={() => openEditModal(produto)}
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => {
+                        setSelectedProduto(produto);
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
-      {/* Modal de Criação */}
       <div
         className={`modal ${showCreateModal ? "d-block" : ""}`}
         tabIndex="-1"
